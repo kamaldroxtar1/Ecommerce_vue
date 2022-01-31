@@ -52,6 +52,7 @@ export default new Router({
             name:'Checkout',
             component:Checkout
         },
+        
         {
             path:'/Wishlist',
             name:'Wishlist',

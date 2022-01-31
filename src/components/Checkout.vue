@@ -29,7 +29,11 @@
             <tr v-for="item of items" :key="item.p_id">
               <td class="cart_product">
                 <router-link to="#"
-                  ><img :src="server + item.productname" alt="" width="150" height="100"
+                  ><img
+                    :src="server + item.productname"
+                    alt=""
+                    width="150"
+                    height="100"
                 /></router-link>
               </td>
               <td class="cart_description">
@@ -60,7 +64,6 @@
                 </p>
               </td>
             </tr>
-
           </tbody>
         </table>
         <div></div>
@@ -78,31 +81,36 @@
                     type="text"
                     placeholder="Email *"
                     v-model="user.userEmail"
-                  /> <br>
+                  />
+                  <br />
                   <input
                     class="form-control"
                     type="text"
                     placeholder="First Name *"
                     v-model="user.userfName"
-                  /> <br>
+                  />
+                  <br />
                   <input
                     class="form-control"
                     type="text"
                     placeholder="Last Name *"
                     v-model="user.userlName"
-                  /> <br>
+                  />
+                  <br />
                   <input
                     class="form-control"
                     type="text"
                     placeholder="Address *"
                     v-model="user.userAddress"
-                  /> <br>
+                  />
+                  <br />
                   <input
                     class="form-control"
                     type="text"
                     placeholder="Postal Code *"
                     v-model="user.userPostal"
-                  /> <br>
+                  />
+                  <br />
                   <input
                     class="form-control"
                     type="text"
@@ -116,26 +124,24 @@
                           type="radio"
                           value="CashOnDelivery"
                           v-model="pay.paymentMethod"
-                          
                         />
                         Cash on Delivery</label
                       > </span
                     >&nbsp;&nbsp;
                     <span>
-                      <label
+                      <!-- <label
                         ><input
                           type="radio"
                           value="Paypal"
                           v-model="pay.paymentMethod"
                         />
-                        Paypal</label
-                      >
+                        Paypal</label -->
+                      
                     </span>
                   </div>
-                  
 
                   <button type="submit" class="btn btn-success">
-                    Make Payment
+                    Place Order
                   </button>
                 </form>
               </div>
@@ -143,25 +149,33 @@
           </div>
           <div class="col-sm-6">
             <div class="total_area">
-              
               <ul>
                 <div>
-                  <input type="text" v-model="couponCode" />  <button
-                          class="btn btn-success btn-sm"
-                          @click="applyCoupon()"
-                        >
-                          Apply Coupon
-                        </button>
+                  <input type="text" v-model="couponCode" />
+                  <button class="btn btn-success btn-sm" @click="applyCoupon()">
+                    Apply Coupon
+                  </button>
                 </div>
-                <li>Discount <span>Rs. {{ this.discount_value }} </span></li>
+                <li>
+                  Discount <span>Rs. {{ this.discount_value }} </span>
+                </li>
                 <li>Shipping Cost <span>Free</span></li>
-                <li>Total <span>Rs {{total()}}</span></li>
+                <li>
+                  Total <span id="price"> {{total() }}</span>
+                  
+                </li>
+                <li>
+                  <Paypal />
+                  
+                </li>
               </ul>
             </div>
           </div>
         </div>
       </div>
-    </div><br>
+    </div>
+    <br />
+    
   </section>
   <!--/#cart_items-->
 </template>
@@ -171,12 +185,16 @@
 // import VueSweetalert2 from 'vue-sweetalert2';
 // import 'sweetalert2/dist/sweetalert2.min.css';
 // Vue.use(VueSweetalert2);
+import Paypal from "../components/Paypal.vue";
  import { coupons } from "../common/Service";
  import { userOrders } from "../common/Service";
  import { userAddress } from "../common/Service";
 import { mapState } from "vuex";
 export default {
   name: "Checkout",
+  components:{
+    Paypal,
+  },
   data() {
     return {
       server: "http://127.0.0.1:8000/images/",
@@ -215,6 +233,7 @@ export default {
       if (this.amount < 500) {
         this.amount = this.amount + 50;
       }
+      localStorage.setItem("amount", this.amount);
       return this.amount;
     },
     applyCoupon() {
@@ -235,6 +254,7 @@ export default {
       else {
         alert("Enter Coupon Code");
       }
+      this.total();
     },
     shipping() {
       if (this.amount > 500) {
@@ -301,11 +321,11 @@ export default {
         localStorage.removeItem("myCart");
         this.$router.push("/");
     },
+  
   },
   mounted() {
     this.items = JSON.parse(localStorage.getItem("myCart"));
     console.log(this.details);
-    // this.total();
     
     coupons().then((res) => {
       if (res) {
@@ -314,11 +334,11 @@ export default {
       }
     });
   },
-};
+}
 </script>
 
 <style>
-.form-check{
-    color:rgb(145, 141, 141);
+.form-check {
+  color: rgb(145, 141, 141);
 }
 </style>
