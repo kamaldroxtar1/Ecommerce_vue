@@ -75,7 +75,7 @@
             <div class="bill-to">
               <p>Bill To</p>
               <div class="form-group">
-                <form @submit.prevent="postOrders()">
+                <form @submit.prevent>
                   <input
                     class="form-control"
                     type="text"
@@ -129,21 +129,24 @@
                       > </span
                     >&nbsp;&nbsp;
                     <span>
-                      <!-- <label
+                      <label
                         ><input
                           type="radio"
                           value="Paypal"
                           v-model="pay.paymentMethod"
                         />
-                        Paypal</label -->
+                        Paypal</label
                       
-                    </span>
+                   > </span>
                   </div>
 
-                  <button type="submit" class="btn btn-success">
+                  <button @click="postOrders()" class="btn btn-success" v-show="this.pay.paymentMethod !=='Paypal'">
                     Place Order
                   </button>
+                  <button @click="payandplace()" class="btn btn-success" v-show="this.pay.paymentMethod==='Paypal'"> Place Order and Pay </button>
+                  
                 </form>
+                
               </div>
             </div>
           </div>
@@ -164,15 +167,13 @@
                   Total <span id="price"> {{total() }}</span>
                   
                 </li>
-                <li>
-                  <Paypal />
-                  
-                </li>
+                
               </ul>
             </div>
           </div>
         </div>
       </div>
+      <paypal :key="key_change" v-show="this.showpaypal===true"/>
     </div>
     <br />
     
@@ -181,20 +182,15 @@
 </template>
 
 <script>
-// import Vue from 'vue';
-// import VueSweetalert2 from 'vue-sweetalert2';
-// import 'sweetalert2/dist/sweetalert2.min.css';
-// Vue.use(VueSweetalert2);
 import Paypal from "../components/Paypal.vue";
- import { coupons } from "../common/Service";
- import { userOrders } from "../common/Service";
- import { userAddress } from "../common/Service";
+import { coupons } from "../common/Service";
+import { userOrders } from "../common/Service";
+import { userAddress } from "../common/Service";
 import { mapState } from "vuex";
+import sendMail from "../common/Service";
 export default {
+  components: { Paypal },
   name: "Checkout",
-  components:{
-    Paypal,
-  },
   data() {
     return {
       server: "http://127.0.0.1:8000/images/",
@@ -203,6 +199,8 @@ export default {
       coupon: undefined,
       discount_value: 0,
       amount: 0,
+      key_change:0,
+      showpaypal:null,
       discountPercentage: 0,
       data: JSON.parse(localStorage.getItem("myCart")),
       user: {
@@ -255,6 +253,7 @@ export default {
         alert("Enter Coupon Code");
       }
       this.total();
+      this.key_change+=1;
     },
     shipping() {
       if (this.amount > 500) {
@@ -263,6 +262,74 @@ export default {
         this.amount = this.amount + 150;
         return 150;
       }
+    },
+    payandplace(){
+      this.showpaypal=true;
+      let order_id=Math.random().toString(36).slice(2);
+        let array = this.data;
+        array.forEach((item) => {
+          let objdata = {
+            name: item.productname,
+            pid: item.pid,
+            image: item.productimagename,
+            price: item.price,
+            quantity: item.quantity,
+            uid: localStorage.getItem("email"),
+            orderid:order_id,
+          };
+          console.log(objdata);
+          userOrders(objdata)
+            .then((res) => {
+              if (res) {
+                console.log(res.data.message);
+              } else {
+                alert(res.data.err);
+              }
+            })
+            .catch((err) => {
+              alert("Something Wrong" + err);
+            });
+        });
+
+        let formData = {
+          first_name: this.user.userfName,
+          last_name: this.user.userlName,
+          email: this.user.userEmail,
+          postal: this.user.userPostal,
+          contact: this.user.userMobile,
+          address: this.user.userAddress,
+          payment_method: this.pay.paymentMethod,
+          uid: localStorage.getItem("email"),
+          orderid:order_id
+          
+        };
+        console.log(formData);
+        userAddress(formData)
+          .then((res) => {
+            if (res) {
+              console.log(res.data.message);
+            } else {
+              alert(res.data.err);
+            }
+          })
+          .catch((err) => {
+            console.log();
+            alert("Something Wrong" + err);
+          });
+        // localStorage.removeItem("myCart");
+         sendMail(formData)
+            .then((res) => {
+              if (res) {
+                console.log(res.data.message);
+              }
+              else {
+              alert(res.data.err);
+            }
+          })
+          .catch((err) => {
+            console.log();
+            alert("Something Wrong" + err);
+          });
     },
     postOrders() {
       let order_id=Math.random().toString(36).slice(2);
@@ -308,9 +375,22 @@ export default {
         userAddress(formData)
           .then((res) => {
             if (res) {
-              console.log(res.data);
+              console.log(res.data.message);
               alert("Order Placed Successfully");
             } else {
+              alert(res.data.err);
+            }
+          })
+          .catch((err) => {
+            console.log();
+            alert("Something Wrong" + err); 
+          });
+          sendMail(formData)
+            .then((res) => {
+              if (res) {
+                console.log(res.data);
+              }
+              else {
               alert(res.data.err);
             }
           })
@@ -319,21 +399,21 @@ export default {
             alert("Something Wrong" + err);
           });
         localStorage.removeItem("myCart");
-        this.$router.push("/");
+        
     },
   
   },
   mounted() {
     this.items = JSON.parse(localStorage.getItem("myCart"));
     console.log(this.details);
-    
+
     coupons().then((res) => {
       if (res) {
         this.coupons = res.data.Coupons;
         console.log(res.data.Coupons);
       }
     });
-  },
+  }
 }
 </script>
 

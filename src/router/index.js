@@ -13,6 +13,7 @@ import Wishlist from '../components/Wishlist.vue';
 import About from '../components/About.vue';
 import OrderDetails from '../components/OrderDetails';
 import ProductDetails from '../components/ProductDetails.vue';
+import Paypal from "../components/Paypal.vue";
 
 export default new Router({
     mode:"history",
@@ -52,7 +53,11 @@ export default new Router({
             name:'Checkout',
             component:Checkout
         },
-        
+        {
+            path:'/Paypal',
+            name:'Paypal',
+            component:Paypal
+        },
         {
             path:'/Wishlist',
             name:'Wishlist',

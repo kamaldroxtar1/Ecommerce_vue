@@ -1,18 +1,18 @@
 <template>
   <section id="cart_items">
-    <div class="mx-auto w-50" id="paypal-button-container" ></div>
+    <div class="conatiner text-center">
+      <div class="mx-auto w-20px" id="paypal-button-container" ></div>
+    </div>
   </section>
   <!--/#cart_items-->
 </template>
 
 <script>
-
 export default {
   name: "Paypal",
-  
   methods: {
     setLoaded: function() {
-      var amount=localStorage.getItem("amount");
+      var amounts=localStorage.getItem("amount");
        this.loaded = true;
       window.paypal.Buttons({
     createOrder: function(data, actions) {
@@ -22,7 +22,7 @@ export default {
         purchase_units: [{
           amount: {
             currency:"USD",
-            value:amount
+            value:amounts,
           }
         }]
       });
@@ -30,8 +30,10 @@ export default {
     onApprove: function(data, actions) {
     // This function captures the funds from the transaction.
     return actions.order.capture().then(function(data) {
-      alert('Transaction completed by ' +data.id);
-
+          alert('Transaction completed by ' +data.status);
+          localStorage.removeItem('myCart');
+          window.location.href="/";
+      
     });
   },
   onError: function () {
@@ -39,8 +41,9 @@ export default {
     window.location.href = "/your-error-page-here";
   }
   }).render('#paypal-button-container');
-          
-    }
+
+  }
+    
   },
   mounted() {
     const script=document.createElement('script');

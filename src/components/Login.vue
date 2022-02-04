@@ -23,7 +23,9 @@
                 Keep me signed in
               </span>
               <button type="submit" class="btn btn-default">Login</button>
+              
             </form>
+            <br />
           </div>
           <!--/login form-->
         </div>
@@ -71,6 +73,7 @@
 </template>
 
 <script>
+import Vue from "vue";
 import store from "../store/store";
 import * as type from "../store/types";
 import { userLogin } from "../common/Service";
@@ -92,7 +95,7 @@ export default {
   },
   computed: mapState({
     msg: (state) => state.emailLogin,
-    login:(state) => state.islogin,
+    login: (state) => state.islogin,
   }),
   methods: {
     postLogin() {
@@ -105,7 +108,7 @@ export default {
             store.dispatch({
               type: type.Islogin,
               id: res.data.access_token,
-              userId:res.data.email,
+              userId: res.data.email,
             });
             console.log(formData);
             this.$router.push("/");
@@ -140,8 +143,8 @@ export default {
       } else {
         alert("password not match.. confirm password!");
       }
-    },
-  },
+    }
+  }
 };
 </script>
 

@@ -43,6 +43,10 @@ export function userAddress(data)
 {
     return axios.post(`${MAIN_URL}address`,data)
 }
+export function sendMail(data)
+{
+    return axios.post(`${MAIN_URL}sendmail`,data)
+}
 export function UpdateUserDetails(data)
 {
     return axios.post(`${MAIN_URL}UpdateUserDetails`,data)
@@ -64,4 +68,4 @@ export function OrderDetails(email){
 export function ProductDetails(orderid){
     return axios.get(`${MAIN_URL}ProductDetails/${orderid}`)
 }
-export default {userLogin,userRegister,userContact,Category,category_product,userOrders,userAddress,coupons,UserDetails,OrderDetails,ProductDetails,UpdateUserDetails,UpdatePassword};
+export default {userLogin,userRegister,userContact,Category,category_product,userOrders,sendMail,userAddress,coupons,UserDetails,OrderDetails,ProductDetails,UpdateUserDetails,UpdatePassword};
