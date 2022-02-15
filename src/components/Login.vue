@@ -73,10 +73,10 @@
 </template>
 
 <script>
-import Vue from "vue";
 import store from "../store/store";
 import * as type from "../store/types";
 import { userLogin } from "../common/Service";
+import { getUserId } from "../common/Service";
 import { userRegister } from "../common/Service";
 import { saveToken } from "@/common/Jwttoken";
 import { mapState } from "vuex";
@@ -110,7 +110,6 @@ export default {
               id: res.data.access_token,
               userId: res.data.email,
             });
-            console.log(formData);
             this.$router.push("/");
           } else {
             alert(res.data.msg);
@@ -119,6 +118,12 @@ export default {
         .catch((err) => {
           console.log("Something Wrong " + err);
         });
+        getUserId(formData.email)
+        .then((res)=>{
+          localStorage.setItem('userid',res.data[0].id);
+          console.log(localStorage.getItem('userid'));
+        })
+
     },
     postRegister() {
       if (this.passwordRegister == this.c_passwordRegister) {

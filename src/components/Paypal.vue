@@ -30,9 +30,9 @@ export default {
     onApprove: function(data, actions) {
     // This function captures the funds from the transaction.
     return actions.order.capture().then(function(data) {
-          alert('Transaction completed by ' +data.status);
+          alert('Order Placed Successfully by ' +data.payer.name.given_name);
           localStorage.removeItem('myCart');
-          window.location.href="/";
+          // window.location.href="/";
       
     });
   },

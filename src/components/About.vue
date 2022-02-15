@@ -4,7 +4,7 @@
       <div class="breadcrumbs">
         <ol class="breadcrumb">
           <li><router-link to="/">Home</router-link></li>
-          <li class="active">About</li>
+          <li class="active">My Profile</li>
         </ol>
       </div>
       <!--/breadcrums-->

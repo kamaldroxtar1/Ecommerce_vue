@@ -6,6 +6,10 @@ import {MAIN_URL} from '@/common/Url';
  {
         return axios.post(`${MAIN_URL}login`,data)
  }
+ export function getUserId(email)
+ {
+        return axios.get(`${MAIN_URL}getuserid/${email}`)
+ }
  export function userRegister(data)
  {
      return axios.post(`${MAIN_URL}register`,data)
@@ -68,4 +72,4 @@ export function OrderDetails(email){
 export function ProductDetails(orderid){
     return axios.get(`${MAIN_URL}ProductDetails/${orderid}`)
 }
-export default {userLogin,userRegister,userContact,Category,category_product,userOrders,sendMail,userAddress,coupons,UserDetails,OrderDetails,ProductDetails,UpdateUserDetails,UpdatePassword};
+export default {userLogin,getUserId,userRegister,userContact,Category,category_product,userOrders,sendMail,userAddress,coupons,UserDetails,OrderDetails,ProductDetails,UpdateUserDetails,UpdatePassword};

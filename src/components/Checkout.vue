@@ -82,6 +82,7 @@
                     placeholder="Email *"
                     v-model="user.userEmail"
                   />
+                  <span> <h6 v-if="this.error.email" class="text-danger"> {{this.error.email}} </h6> </span>                  
                   <br />
                   <input
                     class="form-control"
@@ -89,6 +90,7 @@
                     placeholder="First Name *"
                     v-model="user.userfName"
                   />
+                  <span> <h6 v-if="this.error.fname" class="text-danger"> {{this.error.fname}} </h6> </span> 
                   <br />
                   <input
                     class="form-control"
@@ -96,6 +98,7 @@
                     placeholder="Last Name *"
                     v-model="user.userlName"
                   />
+                  <span> <h6 v-if="this.error.lname" class="text-danger"> {{this.error.lname}} </h6> </span> 
                   <br />
                   <input
                     class="form-control"
@@ -103,6 +106,7 @@
                     placeholder="Address *"
                     v-model="user.userAddress"
                   />
+                  <span> <h6 v-if="this.error.address" class="text-danger"> {{this.error.address}} </h6> </span> 
                   <br />
                   <input
                     class="form-control"
@@ -110,6 +114,7 @@
                     placeholder="Postal Code *"
                     v-model="user.userPostal"
                   />
+                  <span> <h6 v-if="this.error.postal" class="text-danger"> {{this.error.postal}} </h6> </span> 
                   <br />
                   <input
                     class="form-control"
@@ -117,6 +122,7 @@
                     placeholder="Mobile Phone"
                     v-model="user.userMobile"
                   />
+                  <span> <h6 v-if="this.error.mobile" class="text-danger"> {{this.error.mobile}} </h6> </span> 
                   <div class="form-check">
                     <span>
                       <label
@@ -138,6 +144,7 @@
                         Paypal</label
                       
                    > </span>
+                   <span> <h6 v-if="this.error.payment" class="text-danger"> {{this.error.payment}} </h6> </span> 
                   </div>
 
                   <button @click="postOrders()" class="btn btn-success" v-show="this.pay.paymentMethod !=='Paypal'">
@@ -170,6 +177,13 @@
                 
               </ul>
             </div>
+            <!-- <div class="d-flex justify-content-end">
+              <p v-if="this.error.length" style="width:200px" >
+                <ul class="list-group list-group-flush">
+                      <li class="list-group-item text-danger" v-for="e in error" :key="e.id">{{e}}</li>
+                </ul>
+              </p>
+            </div> -->
           </div>
         </div>
       </div>
@@ -182,17 +196,27 @@
 </template>
 
 <script>
+import { UserDetails } from "../common/Service";
 import Paypal from "../components/Paypal.vue";
 import { coupons } from "../common/Service";
 import { userOrders } from "../common/Service";
 import { userAddress } from "../common/Service";
 import { mapState } from "vuex";
-import sendMail from "../common/Service";
+import {sendMail} from "../common/Service";
 export default {
   components: { Paypal },
   name: "Checkout",
   data() {
     return {
+      error:{
+        email:null,
+        fname:null,
+        lname:null,
+        postal:null,
+        mobile:null,
+        address:null,
+        payment:null,
+      },
       server: "http://127.0.0.1:8000/images/",
       items:undefined,
       couponCode: undefined,
@@ -202,14 +226,14 @@ export default {
       key_change:0,
       showpaypal:null,
       discountPercentage: 0,
-      data: JSON.parse(localStorage.getItem("myCart")),
+      data1: JSON.parse(localStorage.getItem("myCart")),
       user: {
-        userEmail: undefined,
-        userfName: undefined,
-        userlName: undefined,
-        userPostal: undefined,
-        userMobile: undefined,
-        userAddress: undefined,
+        userEmail: null,
+        userfName: null,
+        userlName: null,
+        userPostal: null,
+        userMobile: null,
+        userAddress: null,
       },
       pay :{
           paymentMethod:""
@@ -264,9 +288,10 @@ export default {
       }
     },
     payandplace(){
+      if(this.user.userfName && this.user.userlName && this.user.userEmail && this.user.userPostal && this.user.userMobile && this.user.userAddress && this.pay.paymentMethod){
       this.showpaypal=true;
       let order_id=Math.random().toString(36).slice(2);
-        let array = this.data;
+        let array = this.data1;
         array.forEach((item) => {
           let objdata = {
             name: item.productname,
@@ -330,11 +355,35 @@ export default {
             console.log();
             alert("Something Wrong" + err);
           });
+      }
+        this.error={};
+        if(!this.user.userEmail){
+          this.error.email="Email is required";
+        }
+        if(!this.user.userfName){
+          this.error.fname="First Name is required";
+        }
+        if(!this.user.userlName){
+          this.error.lname="Last Name is required";
+        }
+        if(!this.user.userAddress){
+          this.error.address="Address is required";
+        }
+        if(!this.user.userPostal){
+          this.error.postal="Postal Code is required";
+        }
+        if(!this.user.userMobile){
+          this.error.mobile="Contact is required";
+        }
+        if(!this.pay.paymentMethod){
+          this.error.payment="Choose atleast One Payment method";
+        }
     },
     postOrders() {
+      if(this.user.userfName && this.user.userlName && this.user.userEmail && this.user.userPostal && this.user.userMobile && this.user.userAddress && this.pay.paymentMethod){
       let order_id=Math.random().toString(36).slice(2);
       this.submitted = true;
-        let array = this.data;
+        let array = this.data1;
         array.forEach((item) => {
           let objdata = {
             name: item.productname,
@@ -400,8 +449,30 @@ export default {
           });
         localStorage.removeItem("myCart");
         
+    }
+    this.error={};
+        if(!this.user.userEmail){
+          this.error.email="Email is required";
+        }
+        if(!this.user.userfName){
+          this.error.fname="First Name is required";
+        }
+        if(!this.user.userlName){
+          this.error.lname="Last Name is required";
+        }
+        if(!this.user.userAddress){
+          this.error.address="Address is required";
+        }
+        if(!this.user.userPostal){
+          this.error.postal="Postal Code is required";
+        }
+        if(!this.user.userMobile){
+          this.error.mobile="Contact is required";
+        }
+        if(!this.pay.paymentMethod){
+          this.error.payment="Choose atleast One Payment method";
+        }
     },
-  
   },
   mounted() {
     this.items = JSON.parse(localStorage.getItem("myCart"));
@@ -412,6 +483,17 @@ export default {
         this.coupons = res.data.Coupons;
         console.log(res.data.Coupons);
       }
+    });
+    this.param = localStorage.getItem("email");
+
+    UserDetails(this.param).then((res) => {
+      this.data = res.data.user_detail[0];
+
+      this.user.userfName = this.data.name;
+      this.user.userlName = this.data.l_name;
+      this.user.userEmail = this.data.email;
+      this.user.userAddress = this.data.address;
+      this.user.userMobile = this.data.phone;
     });
   }
 }

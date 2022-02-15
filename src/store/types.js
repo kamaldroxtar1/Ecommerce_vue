@@ -1,3 +1,3 @@
 //export const Uid="uid";
-export const Islogin='login';
+export const Islogin='islogin';
 //export const Decrement="decrement";

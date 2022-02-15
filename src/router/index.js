@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 Vue.use(Router);
+// import {createRouter , createWebHistory} from 'vue-router';
 import Main from '../components/Main.vue';
 import Login from '../components/Login.vue';
 import Contact from '../components/Contact.vue';
@@ -31,17 +32,41 @@ export default new Router({
         {
             path:'/Contact',
             name:'Contact',
-            component:Contact
+            component:Contact,
+            beforeEnter:((to, from,next) => {
+                if (localStorage.getItem('email')){
+                next();
+                }
+                else{
+                    next('/Login');
+                }
+            })
         },
         {
             path:'/myProfile',
             name:'About',
-            component:About
+            component:About,
+            beforeEnter:((to, from,next) => {
+                if (localStorage.getItem('email')){
+                next();
+                }
+                else{
+                    next('/Login');
+                }
+            })
         },
         {
             path:'/myOrders',
             name:'OrderDetails',
-            component:OrderDetails
+            component:OrderDetails,
+            beforeEnter:((to, from,next) => {
+                if (localStorage.getItem('email')){
+                next();
+                }
+                else{
+                    next('/Login');
+                }
+            })
         },
         {
             path:'/productDetails/:id',
@@ -51,22 +76,54 @@ export default new Router({
         {
             path:'/Checkout',
             name:'Checkout',
-            component:Checkout
+            component:Checkout,
+            beforeEnter:((to, from,next) => {
+                if (localStorage.getItem('email')){
+                next();
+                }
+                else{
+                    next('/Login');
+                }
+            })
         },
         {
             path:'/Paypal',
             name:'Paypal',
-            component:Paypal
+            component:Paypal,
+            beforeEnter:((to, from,next) => {
+                if (localStorage.getItem('email')){
+                next();
+                }
+                else{
+                    next('/Login');
+                }
+            })
         },
         {
             path:'/Wishlist',
             name:'Wishlist',
-            component:Wishlist
+            component:Wishlist,
+            beforeEnter:((to, from,next) => {
+                if (localStorage.getItem('email')){
+                next();
+                }
+                else{
+                    next('/Login');
+                }
+            })
         },
         {
             path:'/Cart',
             name:'Cart',
-            component:Cart
+            component:Cart,
+            beforeEnter:((to, from,next) => {
+                if (localStorage.getItem('email')){
+                next();
+                }
+                else{
+                    next('/Login');
+                }
+            })
         },
         {
             path:'/category',
@@ -78,12 +135,6 @@ export default new Router({
             name:'CategoryProducts',
             component:CategoryProducts
         },
-        // {
-        //     path:"/productdeatils/:id",
-        //     name:"ProductDeatils",
-        //     component:ProductDeatils
-        // }
-
-
     ]
 });
+
